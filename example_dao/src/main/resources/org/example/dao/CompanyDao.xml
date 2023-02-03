@@ -1,0 +1,51 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.example.dao.CompanyDao">
+
+    <resultMap id="baseMapper" type="org.example.domain.Company">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="representative" property="representative"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="license_id" property="licenseId"/>
+        <result column="expiration_date" property="expirationDate"/>
+        <result column="registered_capital" property="registeredCapital"/>
+        <result column="company_size" property="companySize"/>
+        <result column="industry" property="industry"/>
+        <result column="remarks" property="remarks"/>
+        <result column="state" property="state"/>
+    </resultMap>
+
+    <insert id="save" parameterType="org.example.domain.Company">
+        insert into tb_company value (#{id}, #{name}, #{representative}, #{phone}, #{address}, #{licenseId},
+                                      #{expirationDate}, #{registeredCapital}, #{companySize}, #{industry}, #{remarks},
+                                      #{state});
+    </insert>
+
+    <update id="update" parameterType="org.example.domain.Company">
+        update tb_company
+        set name = #{name} and representative = #{representative} and phone = #{phone} and address = #{address} and
+                   license_id = #{licenseId} and expiration_date = #{expirationDate} and
+                   registered_capital = #{registeredCapital} and company_size = #{companySize} and
+                   industry = #{industry} and remarks = #{remarks} and state = #{state}
+        where id = #{id};
+    </update>
+
+    <delete id="delete" parameterType="String">
+        delete
+        from tb_company
+        where id = #{id}
+    </delete>
+
+    <select id="findById" parameterType="String" resultMap="baseMapper">
+        select *
+        from tb_company
+        where id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="baseMapper">
+        select *
+        from tb_company
+    </select>
+
+</mapper>

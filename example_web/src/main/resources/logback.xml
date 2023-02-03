@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    configuration标签：日志配置文件跟标签
+        scan属性：如果配置文件发生改变，将会被重新加载，默认值为true。
+        scanPeriod属性：设置监测配置文件是否有修改的时间间隔。默认值为1min。(默认单位：ms)
+        debug属性：指定是否打印出logback内部日志信息，实时查看logback运行状态。默认值为false。
+ -->
+<configuration scan="true" scanPeriod="10 seconds" debug="false">
+
+    <!-- ***1.基本配置部分*** -->
+    <!-- 给当前上下文命名，用于区分不同应用程序的记录 -->
+    <contextName>example</contextName>
+    <!--
+        property标签：用于自定义变量
+            name属性：变量的名称
+            value属性：变量的值
+    -->
+    <property name="LOG_HOME" value="/logs/example/"/>
+    <!--
+        %d{yyyy-MM-dd  HH:mm:ss.SSS}：定义日期格式兼容java.text.SimpleDateFormat语法2014-03-25 14:06:49.812
+        %thread：输出产生日志的线程名
+        %-5level：输出日志级别
+        %logger{80}：设置为80表示只输入logger最右边点符号之后的字符串，从最后一个标点符号往前数
+        %msg：输出应用程序提供的信息
+        %n：输出平台相关的分行符"\n"或者"\r\n"
+    -->
+    <property name="LOG_PATTER" value="%d{yyyy-MM-dd  HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n"/>
+    <property name="LOG_CHARSET" value="UTF-8"/>
+
+    <!-- ***2.日志输出部分*** -->
+    <!--
+        appender标签：用于定义日志输出组件
+            name属性(必需)：用于指定appender名称
+            class属性(必需)：指定要配置的appender全限定名
+    -->
+    <!-- 输出到控制台(ConsoleAppender) -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTER}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+    </appender>
+    <!-- 输出到文件(RollingFileAppender类) -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--
+            rollingPolicy标签：用于配置滚动策略，常用策略有以下两个：
+                TimeBasedRollingPolicy策略：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动
+                FixedWindowRollingPolicy策略：根据固定窗口算法重命名文件的滚动策略
+         -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 配置生成日志文件的路径和名称 -->
+            <fileNamePattern>${LOG_HOME}/info.%d{yyyy-MM-dd}_info.log</fileNamePattern>
+            <!-- 配置日志保留的最大天数 -->
+            <maxHistory>365</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${LOG_PATTER}</pattern>
+            <charset>${LOG_CHARSET}</charset>
+        </encoder>
+    </appender>
+
+    <!-- ***3.启用配置*** -->
+    <logger name="org.example" level="DEBUG" addtivity="true">
+        <appender-ref ref="console"/>
+    </logger>
+    <root level="DEBUG">
+        <appender-ref ref="file"/>
+    </root>
+</configuration>
